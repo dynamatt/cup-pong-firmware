@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <tinyNeoPixel_Static.h> 
 #include "leds.h"
+#include "colour.h"
 #include "cup.h"
 
 uint8_t pixels[LED_COUNT*3];
@@ -16,7 +17,7 @@ void LedController_initialise()
     leds.show();
 }
 
-void LedController_setColour(uint8_t index, Colour colour)
+void LedController_setColour(uint8_t index, uint8_colour colour)
 {
     leds.setPixelColor(index, colour.red, colour.green, colour.blue);
 }

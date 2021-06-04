@@ -28,10 +28,4 @@ typedef enum {
   SET_COLOUR_MASK = 0x01,
 } command_t;
 
-typedef struct {
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
-} Colour;
-
 #endif

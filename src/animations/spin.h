@@ -1,11 +1,12 @@
 #ifndef SPIN_H
 #define SPIN_H
 
-#include "cup.h"
+#include "colour.h"
 
 typedef struct {
-    Colour colour;
+    uint8_colour colour;
     uint16_t speed;
+    uint16_t tail;
 } SpinParams;
 
 typedef struct {

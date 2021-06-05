@@ -4,9 +4,11 @@
 #include "animation.h"
 #include "ball.h"
 #include "leds.h"
-#include "utils.h"
+
+#define BUFFER_SIZE 100
 
 DataPacket data;
+uint8_t buffer[BUFFER_SIZE];
 
 void requestEvent()
 {
@@ -19,11 +21,13 @@ void receiveEvent(int bytes_received) {
     while (Wire.available()) {
         command_t command = (command_t)Wire.read();
         switch (command) {
-            case SET_COLOUR:
-              //setColour();
-              break;
-            case SET_COLOUR_MASK:
-              //setColourMask();
+            case SET_ANIMATION:
+              uint8_t animation = Wire.read();
+              uint8_t length = Wire.read();
+              for (int i=0; i<length; i++) {
+                  buffer[i] = Wire.read();
+              }
+              AnimationController_setAnimation(animation, buffer, length);
               break;
         }
     }
@@ -34,6 +38,8 @@ void setup()
     LedController_initialise();
     BallDetector_initialise();
     AnimationController_initialise();
+
+    data.header = PACKET_HEADER;
 
     Wire.begin(I2C_SLAVE_ADDRESS);
     Wire.onReceive(receiveEvent);

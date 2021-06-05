@@ -35,17 +35,25 @@ void AnimationController_initialise()
     Timer1.initialize(LED_REFRESH_INTERVAL_us);
 
     // temp
-    SpinParams temp = { {255, 0, 0}, 50, 4 };
+    SpinParams temp = { {255, 0, 0}, 50, 8 };
     AnimationController_setAnimation(0, (uint8_t*)&temp, sizeof(SpinParams));
 
     // FlashParams temp = { {255, 0, 255}, 500, 500, 500, 500, 0};
     // AnimationController_setAnimation(1, (uint8_t*)&temp, sizeof(FlashParams));
 }
 
-void AnimationController_setAnimation(int animation, uint8_t* params, int length)
+void AnimationController_setAnimation(uint8_t animation, uint8_t* params, uint8_t length)
 {
     Timer1.stop();
     uint8_t *param_buf = (uint8_t*)(&parameters);
+
+    if (animation >= sizeof(animations) / sizeof(Animation)) {
+        return;
+    }
+
+    if (length > sizeof(Parameters)) {
+        return;
+    }
 
     for (int i=0; i<length; i++)
     {

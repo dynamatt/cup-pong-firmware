@@ -16,16 +16,19 @@
 
 #define LED_REFRESH_INTERVAL_us 1000
 
+#define PACKET_HEADER 0x12
+
+#pragma pack(push, 1)
 typedef struct {
-  uint8_t header; // = 0x12
+  uint8_t header;
   uint8_t count;
   uint16_t adc;
   uint8_t ballDetected;
 } DataPacket;
+#pragma pack(pop)
 
 typedef enum {
-  SET_COLOUR = 0x74,
-  SET_COLOUR_MASK = 0x01,
+  SET_ANIMATION =   0x74,
 } command_t;
 
 #endif

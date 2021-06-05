@@ -3,6 +3,7 @@
 
 #include "colour.h"
 
+#pragma pack(push, 1)
 typedef struct {
     uint8_colour colour;
     uint16_t ramp_up_time;
@@ -11,6 +12,7 @@ typedef struct {
     uint16_t off_time;
     uint16_t repeat;
 } FlashParams;
+#pragma pack(pop)
 
 typedef struct {
     uint16_t count;

@@ -10,6 +10,16 @@
 DataPacket data;
 uint8_t buffer[BUFFER_SIZE];
 
+void processCommand(command_t command, uint8_t length)
+{
+    switch (command) {
+        case SET_ANIMATION:
+            uint8_t animation = buffer[0];
+            AnimationController_setAnimation(animation, (uint8_t*)(buffer+1), length-1);
+            break;
+    }
+}
+
 void requestEvent()
 {
     data.count++;
@@ -17,19 +27,15 @@ void requestEvent()
     data.ballDetected = 0;
 }
 
-void receiveEvent(int bytes_received) {
+void receiveEvent(int bytes_received) 
+{
     while (Wire.available()) {
         command_t command = (command_t)Wire.read();
-        switch (command) {
-            case SET_ANIMATION:
-              uint8_t animation = Wire.read();
-              uint8_t length = Wire.read();
-              for (int i=0; i<length; i++) {
-                  buffer[i] = Wire.read();
-              }
-              AnimationController_setAnimation(animation, buffer, length);
-              break;
+        uint8_t length = Wire.read();
+        for (int i=0; i<length; i++) {
+            buffer[i] = Wire.read();
         }
+        processCommand(command, length);
     }
 }
 

@@ -10,13 +10,13 @@ typedef struct {
     uint16_t on_time;
     uint16_t ramp_down_time;
     uint16_t off_time;
-    uint16_t repeat;
+    uint8_t repeat;
 } FlashParams;
 #pragma pack(pop)
 
 typedef struct {
     uint16_t count;
-    uint16_t repeat_count;
+    uint8_t repeat_count;
     uint16_t turn_on;
     uint16_t ramp_down;
     uint16_t turn_off;

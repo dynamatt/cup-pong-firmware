@@ -113,6 +113,7 @@ void spin_refresh()
 void flash_init()
 {
     state.flash.count = 0;
+    state.flash.repeat_count = 0;
 
     state.flash.turn_on = parameters.flash.ramp_up_time;
     state.flash.ramp_down = state.flash.turn_on + parameters.flash.on_time;

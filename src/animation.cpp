@@ -75,6 +75,10 @@ void spin_init()
     // check for invalid parameters
     if (parameters.spin.tail > LED_COUNT || parameters.spin.tail < 1) return;
 
+    for (int i=0; i<LED_COUNT; i++) {
+        LedController_setColour(i, 0, 0, 0);
+    }
+
     for (uint16_t i=0; i<parameters.spin.tail; i++) {
         // uint16_t numerator = parameters.spin.tail - i;
         // LedController_setColour(

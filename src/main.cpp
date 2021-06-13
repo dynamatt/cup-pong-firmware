@@ -5,19 +5,38 @@
 #include "ball.h"
 #include "leds.h"
 
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 15
 
 DataPacket data;
-uint8_t buffer[BUFFER_SIZE];
 
-void processCommand(command_t command, uint8_t length)
+uint8_t buffer[BUFFER_SIZE];
+int buffer_index;
+
+void processCommand()
 {
+    if (buffer_index < 2) {
+        // don't process until we have enough data to read length
+        return;
+    }
+
+    command_t command = (command_t)buffer[0];
+    uint8_t length = buffer[1];
+
+    if (buffer_index < length + 2) {
+        // don't process until we have enough data
+        return;
+    }
+
     switch (command) {
         case SET_ANIMATION:
-            uint8_t animation = buffer[0];
-            AnimationController_setAnimation(animation, (uint8_t*)(buffer+1), length-1);
+            uint8_t animation = buffer[2];
+            AnimationController_setAnimation(animation, (uint8_t*)(buffer+3), length-1);
             break;
+        default:
+            return;
     }
+
+    buffer_index = 0;
 }
 
 void requestEvent()
@@ -30,13 +49,11 @@ void requestEvent()
 void receiveEvent(int bytes_received) 
 {
     while (Wire.available()) {
-        command_t command = (command_t)Wire.read();
-        uint8_t length = Wire.read();
-        for (int i=0; i<length; i++) {
-            buffer[i] = Wire.read();
-        }
-        processCommand(command, length);
+        buffer[buffer_index] = Wire.read();
+        buffer_index++;
     }
+    
+    processCommand();
 }
 
 void setup() 

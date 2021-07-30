@@ -17,12 +17,12 @@ void LedController_initialise()
     leds.show();
 }
 
-void LedController_setColour(uint8_t index, uint8_colour colour)
+void LedController_setColour(uint16_t index, uint8_colour colour)
 {
     leds.setPixelColor(index, colour.red, colour.green, colour.blue);
 }
 
-void LedController_setColour(uint8_t index, uint8_t red, uint8_t green, uint8_t blue)
+void LedController_setColour(uint16_t index, uint8_t red, uint8_t green, uint8_t blue)
 {
     leds.setPixelColor(index, red, green, blue);
 }
@@ -35,6 +35,11 @@ void LedController_pushColour()
         leds.setPixelColor(i, color);
     }
     leds.setPixelColor(0, first_color);
+}
+
+uint8_colour LedController_getColour(uint16_t index)
+{
+    return create(leds.getPixelColor(index));
 }
 
 void LedController_refresh()

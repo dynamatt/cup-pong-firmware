@@ -32,8 +32,6 @@ void processCommand()
             uint8_t animation = buffer[2];
             AnimationController_setAnimation(animation, (uint8_t*)(buffer+3), length-1);
             break;
-        default:
-            return;
     }
 
     buffer_index = 0;

@@ -5,41 +5,55 @@
 #include "timer.h"
 #include "animations/spin.h"
 #include "animations/flash.h"
+#include "animations/fade.h"
 
 typedef struct {
     void (*init_func)();    // this function is called when an animation is initialised
     void (*refresh_func)(); // this function is called periodically to update the animation
 } Animation;
 
-Animation animations[] = {
-    { spin_init, spin_refresh },    // 0x00 - spin
-    { flash_init, flash_refresh }   // 0x01 - flash
-};
-
 union Parameters {
     SpinParams spin;
     FlashParams flash;
+    FadeParams fade;
 };
 
 union State {
     SpinState spin;
     FlashState flash;
+    FadeState fade;
 };
 
 // parameters and state for the current animation
 union Parameters parameters;
 union State state;
 
+void fade_init_a() { fade_init(&parameters.fade, &state.fade); };
+void fade_refresh_a() { fade_refresh(&parameters.fade, &state.fade); }
+
+Animation animations[] = {
+    { spin_init, spin_refresh },    // 0x00 - spin
+    { flash_init, flash_refresh },  // 0x01 - flash
+    { fade_init_a, fade_refresh_a }     // 0x02 - fade
+};
+
 void AnimationController_initialise()
 {
     Timer1.initialize(LED_REFRESH_INTERVAL_us);
 
-    // temp
-    SpinParams temp = { {255, 0, 0}, 50, 8 };
-    AnimationController_setAnimation(0, (uint8_t*)&temp, sizeof(SpinParams));
+    // spin
+    //SpinParams temp = { {255, 0, 0}, 50, 8 };
+    //AnimationController_setAnimation(0, (uint8_t*)&temp, sizeof(SpinParams));
 
-    // FlashParams temp = { {255, 0, 255}, 500, 500, 500, 500, 0};
+    // flash
+    // FlashParams temp = { {255, 0, 255}, 500, 200, 500, 200, 3};
     // AnimationController_setAnimation(1, (uint8_t*)&temp, sizeof(FlashParams));
+
+    //fade
+    for (int i=0; i<LED_COUNT; i++) LedController_setColour(i, 255, 0, 0);
+    LedController_refresh();
+    FadeParams temp = { {0, 255, 255}, 3000 };
+    AnimationController_setAnimation(2, (uint8_t*)&temp, sizeof(FadeParams));
 }
 
 void AnimationController_setAnimation(uint8_t animation, uint8_t* params, uint8_t length)

@@ -8,6 +8,21 @@ uint16_colour add(uint16_colour a, uint16_colour b) {
   return c;
 }
 
+uint8_colour create(uint32_t c) {
+  //uint8_t* bytes = (uint8_t*)c; 
+  // uint8_colour colour;
+  // colour.red = bytes[2];
+  // colour.green = bytes[1];
+  // colour.blue = bytes[0];
+
+  uint8_colour colour = {
+    0xFF & (c >> 16),
+    0xFF & (c >> 8),
+    0xFF & (c)
+  };
+  return colour;
+}
+
 uint16_colour subtract(uint16_colour a, uint16_colour b) {
   uint16_colour c;
   if (a.red > b.red) {

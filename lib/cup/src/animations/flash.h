@@ -28,7 +28,7 @@ typedef struct {
     uint16_colour (*diff_func)(uint16_colour, uint16_colour);
 } FlashState;
 
-void flash_init();
-void flash_refresh();
+void flash_init(FlashParams *params, FlashState *state);
+void flash_refresh(FlashParams *params, FlashState *state);
 
 #endif

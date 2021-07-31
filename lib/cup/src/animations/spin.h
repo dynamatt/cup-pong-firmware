@@ -15,7 +15,7 @@ typedef struct {
     uint16_t count;
 } SpinState;
 
-void spin_init();
-void spin_refresh();
+void spin_init(SpinParams* params, SpinState* state);
+void spin_refresh(SpinParams* params, SpinState* state);
 
 #endif

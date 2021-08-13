@@ -1,6 +1,8 @@
+#include <stdint.h>
+#include "timer1.h"
 #include "timer.h"
 
-TimerOne Timer1;              // preinstatiate
+TimerOne Timer1;              // preinstantiate
 
 unsigned short TimerOne::pwmPeriod = 0;
 unsigned char TimerOne::clockSelectBits = 0;
@@ -15,4 +17,24 @@ ISR(TIMER1_COMPA_vect)
 
 void TimerOne::isrDefaultUnused()
 {
+}
+
+void Timer_initialize(uint64_t microseconds)
+{
+  Timer1.initialize(microseconds);
+}
+
+void Timer_start()
+{
+  Timer1.start();
+}
+
+void Timer_stop()
+{
+  Timer1.stop();
+}
+
+void Timer_attachInterrupt(void (*isr)())
+{
+  Timer1.attachInterrupt(isr);
 }

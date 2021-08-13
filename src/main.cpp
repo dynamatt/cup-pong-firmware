@@ -58,7 +58,7 @@ void setup()
 {
     LedController_initialise();
     BallDetector_initialise();
-    AnimationController_initialise();
+    AnimationController_initialise(LED_REFRESH_INTERVAL_us);
 
     data.header = PACKET_HEADER;
 

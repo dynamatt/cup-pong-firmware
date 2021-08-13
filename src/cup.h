@@ -8,12 +8,10 @@
 #define RX_PIN    A3  // analog pin for receiver voltage (pin 2)
 #define TX_PIN    4   // digital pin for transmitter output
 
-#define I2C_SLAVE_ADDRESS 0x62
-
 // ADC value for the ball to count as being detected
 #define BALL_DETECTION_THRESHOLD 10
 
-#define LED_REFRESH_INTERVAL_us 1000
+#define LED_REFRESH_INTERVAL_us 10000
 
 #define PACKET_HEADER 0x12
 

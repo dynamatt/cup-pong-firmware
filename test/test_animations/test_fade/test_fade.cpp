@@ -1,10 +1,13 @@
 #include <unity.h>
 #include <stdio.h>
+#include "animation.h"
 #include "animations/fade.h"
+#include "timer.h"
 
 #define TEST_ASSERT_LEDS(i, r, g, b) TEST_ASSERT_EQUAL_UINT8_MESSAGE(pixels_live[(i)].red, (r), "Red index "#i);TEST_ASSERT_EQUAL_UINT8_MESSAGE(pixels_live[(i)].green, (g), "Green index "#i);TEST_ASSERT_EQUAL_UINT8_MESSAGE(pixels_live[(i)].blue, (b), "Blue index "#i)
 
 extern uint8_colour pixels_live[LED_COUNT];
+extern void MockTimer_tick();
 
 void print_pixels_live()
 {
@@ -21,21 +24,26 @@ void print_pixels_live()
 
 void test_fade_in()
 {
+    AnimationController_initialise(1);
+
+    // set pixels to off initially
+    for (int i=0; i<LED_COUNT; i++) {
+        LedController_setColour(i, 0, 0, 0);
+    }
+    LedController_refresh();
+
     FadeParams params = {
         {10, 100, 200},
         10
     };
 
-    FadeState state = {};
+    AnimationController_setAnimation(0x02, (uint8_t*)&params, sizeof(FadeParams));
 
-    fade_init(&params, &state);
-
-    TEST_ASSERT_EQUAL(10, state.count);
     print_pixels_live();
 
     for (int i=10; i>=0; i--)
     {
-        fade_refresh(&params, &state);
+        MockTimer_tick();
         print_pixels_live();
     }
     

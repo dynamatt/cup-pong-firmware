@@ -1,11 +1,10 @@
+#include <stddef.h>
 #include <stdint.h>
 #include "animation.h"
-#include "cup.h"
-#include "leds.h"
-#include "timer.h"
 #include "animations/spin.h"
 #include "animations/flash.h"
 #include "animations/fade.h"
+#include "timer.h"
 
 typedef struct {
     void (*init_func)();    // this function is called when an animation is initialised
@@ -41,28 +40,28 @@ Animation animations[] = {
     { _fade_init, _fade_refresh }     // 0x02 - fade
 };
 
-void AnimationController_initialise()
+void (*refresh_func)() = NULL;
+
+void update()
 {
-    Timer1.initialize(LED_REFRESH_INTERVAL_us);
+    Timer_stop();
+    if (refresh_func != NULL)
+    {
+        refresh_func();
+    }
 
-    // spin
-    //SpinParams temp = { {255, 0, 0}, 50, 8 };
-    //AnimationController_setAnimation(0, (uint8_t*)&temp, sizeof(SpinParams));
+    Timer_start();
+}
 
-    // flash
-    // FlashParams temp = { {255, 0, 255}, 500, 200, 500, 200, 3};
-    // AnimationController_setAnimation(1, (uint8_t*)&temp, sizeof(FlashParams));
-
-    //fade
-    for (int i=0; i<LED_COUNT; i++) LedController_setColour(i, 255, 0, 0);
-    LedController_refresh();
-    FadeParams temp = { {0, 255, 255}, 3000 };
-    AnimationController_setAnimation(2, (uint8_t*)&temp, sizeof(FadeParams));
+void AnimationController_initialise(uint64_t period)
+{
+    Timer_initialize(period);
+    Timer_attachInterrupt(update);
 }
 
 void AnimationController_setAnimation(uint8_t animation, uint8_t* params, uint8_t length)
 {
-    Timer1.stop();
+    Timer_stop();
     uint8_t *param_buf = (uint8_t*)(&parameters);
 
     if (animation >= sizeof(animations) / sizeof(Animation)) {
@@ -77,8 +76,8 @@ void AnimationController_setAnimation(uint8_t animation, uint8_t* params, uint8_
     {
         param_buf[i] = params[i];
     }
-
+    
     animations[animation].init_func();
-    Timer1.attachInterrupt(animations[animation].refresh_func);
-    Timer1.start();
+    refresh_func = animations[animation].refresh_func;
+    Timer_start();
 }

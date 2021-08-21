@@ -3,17 +3,17 @@
 
 void (*isrCallback)();
 uint64_t timer_period;
-uint64_t time; 
+uint64_t time;
 bool is_enabled;
 
 void Timer_initialize(uint64_t period)
 {
+    time = 0;
     timer_period = period;
 }
 
 void Timer_start()
 {
-    time = 0;
     is_enabled = true;
 }
 

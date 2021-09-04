@@ -57,7 +57,7 @@ void receiveEvent(int bytes_received)
 void setup() 
 {
     LedController_initialise();
-    BallDetector_initialise();
+    BallDetector_initialise(BALL_DETECTION_THRESHOLD);
     AnimationController_initialise(LED_REFRESH_INTERVAL_us);
 
     data.header = PACKET_HEADER;

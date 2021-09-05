@@ -16,5 +16,33 @@ To compile and run using `platformio`:
 
     pio run -e attiny85
 
-# Programmer Type
+# Programming
+
+## Using USBASP
  - Programmer Type: usbasp
+
+## Using Raspberry Pi
+When programming with AVR dude, use the following configuration:
+
+    # Linux GPIO configuration for avrdude.
+    # Change the lines below to the GPIO pins connected to the AVR.
+    programmer
+    id    = "pi_1";
+    desc  = "Use the Linux sysfs interface to bitbang GPIO lines";
+    type  = "linuxgpio";
+    reset = 17;
+    sck   = 3;
+    mosi  = 2;
+    miso  = 4;
+    ;
+
+This configuration allows uploading firmwate using a Raspberry Pi without disconnecting I2C lines.
+
+To make sure everything is plugged in and configured correctly:
+
+    sudo avrdude -p t85 -C ~/avrdude_gpio.conf -c pi_1 -v
+
+
+# Raspberry Pi Pinout
+
+![](https://cdn.sparkfun.com/assets/learn_tutorials/1/5/9/5/GPIO.png)

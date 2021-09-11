@@ -13,19 +13,22 @@
 
 #define LED_REFRESH_INTERVAL_us 10000
 
-#define PACKET_HEADER 0x12
-
 #pragma pack(push, 1)
 typedef struct {
   uint8_t header;
   uint8_t count;
-  uint16_t adc;
-  uint8_t ballDetected;
+  uint16_t min_adc;
+  uint16_t max_adc;
 } DataPacket;
 #pragma pack(pop)
 
 typedef enum {
-  SET_ANIMATION =   0x74,
+  SET_ANIMATION = 0x74,
+  SET_BALL_DETECTION_THRESHOLD = 0x75,
 } command_t;
+
+typedef enum {
+  ADDR_BALL_DETECTION_THRESHOLD = 0x00,
+} eeprom_address_t;
 
 #endif

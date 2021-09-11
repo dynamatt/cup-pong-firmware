@@ -2,6 +2,7 @@
 #define BALL_H
 
 void BallDetector_initialise(uint16_t threshold);
-bool BallDetector_isBallDetected(uint16_t *adc);
+void BallDetector_measure();
+bool BallDetector_isBallDetected(uint16_t *min, uint16_t *max);
 
 #endif

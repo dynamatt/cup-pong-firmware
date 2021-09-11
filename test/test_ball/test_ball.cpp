@@ -8,67 +8,87 @@ extern uint8_t transmitter_enabled;
 
 void test_ball_detection()
 {
-    uint16_t adc;
+    uint16_t min_adc;
+    uint16_t max_adc;
     bool detected;
 
     BallDetector_initialise(10);
 
     // no detection
     analogue_value = 11;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(11, adc);
+    BallDetector_measure();
+    analogue_value = 31;
+    BallDetector_measure();
+    analogue_value = 25;
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(11, min_adc);
+    TEST_ASSERT_EQUAL(31, max_adc);
     TEST_ASSERT_FALSE_MESSAGE(detected, "No detection");
+
+    // min and max value are reset after check
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(255, min_adc);
+    TEST_ASSERT_EQUAL(0, max_adc);
 
     // ball first detected
     analogue_value = 10;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(10, adc);
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(10, min_adc);
     TEST_ASSERT_TRUE_MESSAGE(detected, "Ball first detected");
 
-    // don't detect again yet
+    // // don't detect again yet
     analogue_value = 9;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(9, adc);
-    TEST_ASSERT_FALSE_MESSAGE(detected, "Ball still present");
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(9, min_adc);
+    // TEST_ASSERT_FALSE_MESSAGE(detected, "Ball still present");
 
     // ball gone
     analogue_value = 20;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(20, adc);
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(20, min_adc);
     TEST_ASSERT_FALSE_MESSAGE(detected, "Ball gone");
 
     // still gone
     analogue_value = 20;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(20, adc);
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(20, min_adc);
     TEST_ASSERT_FALSE_MESSAGE(detected, "Still gone");
 
     // detect again
     analogue_value = 8;
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(8, adc);
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(8, min_adc);
     TEST_ASSERT_TRUE_MESSAGE(detected, "Detect again");
 
     // stay low for a few cycles
     for (int i=0; i<10; i++) {
         analogue_value = i;
-        detected = BallDetector_isBallDetected(&adc);
-        TEST_ASSERT_EQUAL(i, adc);
-        TEST_ASSERT_FALSE_MESSAGE(detected, "Staying low");
+        BallDetector_measure();
+        detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+        TEST_ASSERT_EQUAL(i, min_adc);
+        // TEST_ASSERT_FALSE_MESSAGE(detected, "Staying low");
     }
 
     // stay high for a few cycles
     for (int i=20; i<30; i++) {
         analogue_value = i;
-        detected = BallDetector_isBallDetected(&adc);
-        TEST_ASSERT_EQUAL(i, adc);
+        BallDetector_measure();
+        detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+        TEST_ASSERT_EQUAL(i, min_adc);
         TEST_ASSERT_FALSE_MESSAGE(detected, "Staying high");
     }
 
     // set a new threshold
     BallDetector_initialise(40);
-    detected = BallDetector_isBallDetected(&adc);
-    TEST_ASSERT_EQUAL(29, adc);
+    BallDetector_measure();
+    detected = BallDetector_isBallDetected(&min_adc, &max_adc);
+    TEST_ASSERT_EQUAL(29, min_adc);
     TEST_ASSERT_TRUE_MESSAGE(detected, "New threshold");
 }
 

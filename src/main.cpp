@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <Wire.h>
 #include "cup.h"
 #include "animation.h"
@@ -29,9 +30,18 @@ void processCommand()
 
     switch (command) {
         case SET_ANIMATION:
+        {
             uint8_t animation = buffer[2];
             AnimationController_setAnimation(animation, (uint8_t*)(buffer+3), length-1);
             break;
+        }
+        case SET_BALL_DETECTION_THRESHOLD:
+        {
+            uint8_t new_threshold = buffer[2];
+            EEPROM.write(ADDR_BALL_DETECTION_THRESHOLD, new_threshold);
+            BallDetector_initialise(new_threshold);
+            break;
+        }
     }
 
     buffer_index = 0;
@@ -40,8 +50,8 @@ void processCommand()
 void requestEvent()
 {
     data.count++;
+    BallDetector_isBallDetected(&data.min_adc, &data.max_adc);
     Wire.write((uint8_t*)&data, sizeof(DataPacket));
-    data.ballDetected = 0;
 }
 
 void receiveEvent(int bytes_received) 
@@ -57,10 +67,10 @@ void receiveEvent(int bytes_received)
 void setup() 
 {
     LedController_initialise();
-    BallDetector_initialise(BALL_DETECTION_THRESHOLD);
+    BallDetector_initialise(EEPROM.read(ADDR_BALL_DETECTION_THRESHOLD));
     AnimationController_initialise(LED_REFRESH_INTERVAL_us);
 
-    data.header = PACKET_HEADER;
+    data.header = I2C_SLAVE_ADDRESS;
 
     Wire.begin(I2C_SLAVE_ADDRESS);
     Wire.onReceive(receiveEvent);
@@ -69,8 +79,5 @@ void setup()
 
 void loop() 
 {
-    if (BallDetector_isBallDetected(&data.adc)) 
-    {
-      data.ballDetected = 1;
-    }
+    BallDetector_measure();
 }

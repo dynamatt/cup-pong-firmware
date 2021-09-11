@@ -12,7 +12,7 @@ extern void MockTimer_tick();
 
 void print_pixels_live()
 {
-    printf("[%llu] 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X\n", 
+    printf("[%lu] 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X 0x%02X%02X%02X\n", 
         time,
         pixels_live[0].red, pixels_live[0].green, pixels_live[0].blue,
         pixels_live[1].red, pixels_live[1].green, pixels_live[1].blue,

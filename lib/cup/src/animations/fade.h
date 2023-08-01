@@ -6,7 +6,7 @@
 
 #pragma pack(push, 1)
 typedef struct {
-    uint8_colour colour;
+    uint8_colour colour[LED_COUNT];
     uint16_t duration;
 } FadeParams;
 #pragma pack(pop)

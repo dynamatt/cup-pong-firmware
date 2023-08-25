@@ -6,12 +6,30 @@
 #include "ball.h"
 #include "leds.h"
 
-#define BUFFER_SIZE 15
 
-DataPacket data;
+#define BUFFER_SIZE 29
 
-uint8_t buffer[BUFFER_SIZE];
-int buffer_index;
+static DataPacket data;
+
+static uint8_t buffer[BUFFER_SIZE];
+static int buffer_index;
+
+
+// method definitions
+void requestEvent();
+void receiveEvent(int bytes_received);
+
+
+void initialiseWire()
+{
+    //uint8_t address = EEPROM.read(ADDR_I2C_SLAVE_ADDRESS);
+    uint8_t address = I2C_SLAVE_ADDRESS;
+    data.header = address;
+
+    Wire.begin(address);
+    Wire.onReceive(receiveEvent);
+    Wire.onRequest(requestEvent);
+}
 
 void processCommand()
 {
@@ -39,7 +57,7 @@ void processCommand()
         {
             uint8_t new_threshold = buffer[2];
             EEPROM.write(ADDR_BALL_DETECTION_THRESHOLD, new_threshold);
-            BallDetector_initialise(new_threshold);
+            BallDetector_setThreshold(new_threshold);
             break;
         }
     }
@@ -67,14 +85,13 @@ void receiveEvent(int bytes_received)
 void setup() 
 {
     LedController_initialise();
-    BallDetector_initialise(EEPROM.read(ADDR_BALL_DETECTION_THRESHOLD));
+    BallDetector_initialise();
+    BallDetector_setThreshold(EEPROM.read(ADDR_BALL_DETECTION_THRESHOLD));
     AnimationController_initialise(LED_REFRESH_INTERVAL_us);
+    initialiseWire();
 
     data.header = I2C_SLAVE_ADDRESS;
 
-    Wire.begin(I2C_SLAVE_ADDRESS);
-    Wire.onReceive(receiveEvent);
-    Wire.onRequest(requestEvent);
 }
 
 void loop() 

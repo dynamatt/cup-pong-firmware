@@ -9,10 +9,14 @@ uint16_t threshold;
 uint16_t min_adc = UCHAR_MAX;
 uint16_t max_adc = 0;
 
-void BallDetector_initialise(uint16_t thresh)
+void BallDetector_initialise()
+{
+    IO_initialise();
+}
+
+void BallDetector_setThreshold(uint16_t thresh)
 {
     threshold = thresh;
-    IO_initialise();
 }
 
 void BallDetector_measure()
@@ -42,7 +46,7 @@ bool BallDetector_isBallDetected(uint16_t *min, uint16_t *max)
 
     bool detected = min_adc <= threshold;
 
-    min_adc = UCHAR_MAX;
+    min_adc = USHRT_MAX;
     max_adc = 0;
 
     return detected;

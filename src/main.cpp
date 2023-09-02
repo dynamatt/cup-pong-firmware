@@ -70,6 +70,7 @@ void requestEvent()
     data.count++;
     BallDetector_isBallDetected(&data.min_adc, &data.max_adc);
     Wire.write((uint8_t*)&data, sizeof(DataPacket));
+    buffer_index = 0;   // reset the buffer index in case there was a problem with previous write
 }
 
 void receiveEvent(int bytes_received) 
@@ -80,6 +81,21 @@ void receiveEvent(int bytes_received)
     }
     
     processCommand();
+}
+
+void set_leds_to_address()
+{
+    for (int i=0; i<7; i++)
+    {
+        byte on = 0;
+        if ((data.header & (1 << i)) > 0)
+        {
+            on = 100;
+        }
+        LedController_setColour(i, on, 0, 0);
+    }
+    LedController_setColour(7, 0, 100, 0);
+    LedController_refresh();
 }
 
 void setup() 
@@ -94,7 +110,14 @@ void setup()
 
 }
 
+bool first = true;
+
 void loop() 
 {
     BallDetector_measure();
+    if (first)
+    {
+        set_leds_to_address();
+        first = false;
+    }
 }

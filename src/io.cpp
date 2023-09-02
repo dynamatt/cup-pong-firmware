@@ -5,6 +5,7 @@
 void IO_initialise() {
     pinMode(RX_PIN, INPUT);
     pinMode(TX_PIN, OUTPUT);
+    analogReference(DEFAULT);
 }
 
 uint16_t IO_readReceiver() {

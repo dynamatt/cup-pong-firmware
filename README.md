@@ -10,7 +10,26 @@ The following configuration settings are used:
  - millis/micros: Enabled
 
 # Compilation Instructions
-*Before loading the firmware, the Arduino Bootloader must be loaded using the "Burn Bootloader" command on the Arduino IDE.*
+*Before loading the firmware for the first time on a new microcontroller, the fuses must be set using the "Set Fuses" command in PlatformIO.*
+
+Fuse settings (see http://eleccelerator.com/fusecalc/fusecalc.php?chip=attiny85&LOW=D2&HIGH=DF&EXTENDED=FF&LOCKBIT=FF):
+
+    lfuse: 0xD2
+        [ ] Clock output on PORTB4; [CKOUT=0]
+        [ ] Divide clock by 8 internally; [CKDIV8=0]
+
+    hfuse: 0xDF
+        [ ] Debug Wire enable; [DWEN=0] *
+        [ ] Preserve EEPROM memory through the Chip Erase cycle; [EESAVE=0]
+        [ ] Reset Disabled (Enable PB5 as i/o pin); [RSTDISBL=0] *
+        [*] Serial program downloading (SPI) enabled; [SPIEN=1] *
+        [ ] Watch-dog Timer always on; [WDTON=0]
+
+    efuse = 0xFF
+        [ ] Self Programming enable; [SELFPRGEN=0]
+
+    lock_bits = 0xFF
+        [ ] Mode 1: No memory lock features enabled
 
 To compile and run using `platformio`:
 
@@ -46,3 +65,7 @@ To make sure everything is plugged in and configured correctly:
 # Raspberry Pi Pinout
 
 ![](https://cdn.sparkfun.com/assets/learn_tutorials/1/5/9/5/GPIO.png)
+
+# ATTiny85 Pinout
+
+![](https://github.com/SpenceKonde/ATTinyCore/blob/v2.0.0-devThis-is-the-head-submit-PRs-against-this/avr/extras/Pinout_x5.jpg?raw=true)

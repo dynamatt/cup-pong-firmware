@@ -12,7 +12,8 @@ void test_ball_detection()
     uint16_t max_adc;
     bool detected;
 
-    BallDetector_initialise(10);
+    BallDetector_initialise();
+    BallDetector_setThreshold(10);
 
     // no detection
     analogue_value = 11;
@@ -85,7 +86,7 @@ void test_ball_detection()
     }
 
     // set a new threshold
-    BallDetector_initialise(40);
+    BallDetector_setThreshold(40);
     BallDetector_measure();
     detected = BallDetector_isBallDetected(&min_adc, &max_adc);
     TEST_ASSERT_EQUAL(29, min_adc);

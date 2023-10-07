@@ -5,7 +5,7 @@
 #include "animation.h"
 #include "ball.h"
 #include "leds.h"
-
+#include "animations/test.h"
 
 #define BUFFER_SIZE 29
 
@@ -51,6 +51,7 @@ void processCommand()
         {
             uint8_t animation = buffer[2];
             AnimationController_setAnimation(animation, (uint8_t*)(buffer+3), length-1);
+            BallDetector_initialise();
             break;
         }
         case SET_BALL_DETECTION_THRESHOLD:
@@ -87,15 +88,28 @@ void set_leds_to_address()
 {
     for (int i=0; i<7; i++)
     {
-        byte on = 0;
+        byte red, blue = 0;
         if ((data.header & (1 << i)) > 0)
         {
-            on = 100;
+            red = 100;
         }
-        LedController_setColour(i, on, 0, 0);
+        else
+        {
+            blue = 100;
+        }
+        LedController_setColour(i, red, 0, blue);
     }
     LedController_setColour(7, 0, 100, 0);
     LedController_refresh();
+}
+
+void enable_test_mode()
+{
+    TestParams params = {
+        100
+    };
+
+    AnimationController_setAnimation(0x03, (uint8_t *) (&params), sizeof(TestParams));
 }
 
 void setup() 
@@ -105,9 +119,6 @@ void setup()
     BallDetector_setThreshold(EEPROM.read(ADDR_BALL_DETECTION_THRESHOLD));
     AnimationController_initialise(LED_REFRESH_INTERVAL_us);
     initialiseWire();
-
-    data.header = I2C_SLAVE_ADDRESS;
-
 }
 
 bool first = true;
@@ -118,6 +129,8 @@ void loop()
     if (first)
     {
         set_leds_to_address();
+        delay(4000);
+        enable_test_mode();
         first = false;
     }
 }

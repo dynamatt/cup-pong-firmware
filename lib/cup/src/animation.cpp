@@ -4,6 +4,7 @@
 #include "animations/spin.h"
 #include "animations/flash.h"
 #include "animations/fade.h"
+#include "animations/test.h"
 #include "timer.h"
 
 typedef struct {
@@ -15,12 +16,14 @@ union Parameters {
     SpinParams spin;
     FlashParams flash;
     FadeParams fade;
+    TestParams test;
 };
 
 union State {
     SpinState spin;
     FlashState flash;
     FadeState fade;
+    TestState test;
 };
 
 // parameters and state for the current animation
@@ -33,11 +36,14 @@ inline void _flash_init() { flash_init(&parameters.flash, &state.flash); }
 inline void _flash_refresh() { flash_refresh(&parameters.flash, &state.flash); }
 inline void _spin_init() { spin_init(&parameters.spin, &state.spin); }
 inline void _spin_refresh() { spin_refresh(&parameters.spin, &state.spin); }
+inline void _test_init() { test_init(&parameters.test, &state.test); }
+inline void _test_refresh() { test_refresh(&parameters.test, &state.test); }
 
 Animation animations[] = {
     { _spin_init, _spin_refresh },    // 0x00 - spin
     { _flash_init, _flash_refresh },  // 0x01 - flash
-    { _fade_init, _fade_refresh }     // 0x02 - fade
+    { _fade_init, _fade_refresh },    // 0x02 - fade
+    { _test_init, _test_refresh }     // 0x03 - test
 };
 
 void (*refresh_func)() = NULL;

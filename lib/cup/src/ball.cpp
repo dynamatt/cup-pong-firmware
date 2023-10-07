@@ -12,6 +12,7 @@ uint16_t max_adc = 0;
 void BallDetector_initialise()
 {
     IO_initialise();
+    IO_enableTransmitter();
 }
 
 void BallDetector_setThreshold(uint16_t thresh)
@@ -21,9 +22,6 @@ void BallDetector_setThreshold(uint16_t thresh)
 
 void BallDetector_measure()
 {
-    // turn on the IR transmitter
-    IO_enableTransmitter();
-
     // read the IR receiver value
     uint16_t sensorValue = IO_readReceiver();
     if (sensorValue > max_adc)
@@ -34,9 +32,6 @@ void BallDetector_measure()
     {
         min_adc = sensorValue;
     }
-
-    // turn off the IR transmitter
-    IO_disableTransmitter();
 }
 
 bool BallDetector_isBallDetected(uint16_t *min, uint16_t *max)
